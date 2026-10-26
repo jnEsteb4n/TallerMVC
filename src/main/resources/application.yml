@@ -1,0 +1,22 @@
+spring:
+  application:
+    name: alphabackend
+  datasource:
+    url: jdbc:h2:file:./data/alphabackend
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+    hikari:
+      maximum-pool-size: 5
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: none
+    properties:
+      hibernate:
+        format_sql: true
+  sql:
+    init:
+      mode: always
+      schema-locations: classpath:db/schema.sql
+      data-locations: classpath:db/data.sql

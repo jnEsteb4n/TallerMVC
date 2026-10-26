@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head(${roleId == null ? 'Crear rol' : 'Editar rol'})}"></head>
+<body>
+<div class="shell">
+    <aside th:replace="~{fragments/layout :: sidebar('roles')}"></aside>
+    <main class="main">
+        <header class="page-head">
+            <div>
+                <a class="back" th:href="@{/roles}">Roles</a>
+                <h1 th:text="${roleId == null ? 'Crear rol' : 'Editar rol'}">Crear rol</h1>
+            </div>
+        </header>
+
+        <div th:replace="~{fragments/layout :: alerts}"></div>
+
+        <section class="panel panel-narrow">
+            <form th:action="${roleId == null} ? @{/roles} : @{/roles/{id}(id=${roleId})}"
+                  th:object="${roleForm}" method="post" class="form" novalidate>
+                <div class="field">
+                    <label for="name">Nombre</label>
+                    <input type="text" th:field="*{name}" th:errorclass="is-invalid" placeholder="TESORERO">
+                    <p class="field-error" th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></p>
+                </div>
+                <div class="field">
+                    <label for="description">Descripción</label>
+                    <textarea th:field="*{description}" rows="3" th:errorclass="is-invalid"></textarea>
+                    <p class="field-error" th:if="${#fields.hasErrors('description')}" th:errors="*{description}"></p>
+                </div>
+
+                <!-- Solo al crear: un rol nace con al menos un permiso (regla de RoleService) -->
+                <fieldset class="checklist" th:if="${roleId == null}">
+                    <legend>Permisos iniciales (al menos uno)</legend>
+                    <label class="check-row" th:each="p : ${permissions}">
+                        <input type="checkbox" th:field="*{permissionIds}" th:value="${p.id}">
+                        <span class="perm-tag" th:text="${p.name}">USER_READ</span>
+                        <span class="muted" th:text="${p.description}">Consultar usuarios</span>
+                    </label>
+                </fieldset>
+
+                <div class="form-actions">
+                    <button class="btn btn-primary" type="submit"
+                            th:text="${roleId == null} ? 'Crear rol' : 'Guardar cambios'">Crear rol</button>
+                    <a class="btn btn-ghost" th:href="@{/roles}">Cancelar</a>
+                </div>
+            </form>
+        </section>
+    </main>
+</div>
+</body>
+</html>

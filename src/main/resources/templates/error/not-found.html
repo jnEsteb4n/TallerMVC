@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('No encontrado')}"></head>
+<body>
+<div class="shell">
+    <aside th:replace="~{fragments/layout :: sidebar('none')}"></aside>
+    <main class="main">
+        <section class="panel notice">
+            <p class="notice-code">404</p>
+            <h1>No encontramos lo que buscas</h1>
+            <p th:text="${message}">El registro no existe o fue eliminado.</p>
+            <a class="btn btn-primary" th:href="@{/}">Volver al inicio</a>
+        </section>
+    </main>
+</div>
+</body>
+</html>

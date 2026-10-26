@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragments/layout :: head('Roles')}"></head>
+<body>
+<div class="shell">
+    <aside th:replace="~{fragments/layout :: sidebar('roles')}"></aside>
+    <main class="main">
+        <header class="page-head">
+            <div>
+                <h1>Roles</h1>
+                <p class="lead">Cada rol agrupa permisos. Un usuario recibe la suma de los permisos de sus roles.</p>
+            </div>
+            <a sec:authorize="hasAuthority('ROLE_WRITE')" class="btn btn-primary" th:href="@{/roles/new}">Crear rol</a>
+        </header>
+
+        <div th:replace="~{fragments/layout :: alerts}"></div>
+
+        <div class="table-wrap" th:if="${!roles.isEmpty()}">
+            <table class="table">
+                <thead>
+                <tr>
+                    <th scope="col">Rol</th>
+                    <th scope="col">Descripción</th>
+                    <th scope="col">Permisos</th>
+                    <th scope="col" class="col-actions">Acciones</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="r : ${roles}">
+                    <td><span class="role-chip" th:text="${r.name}">ADMIN</span></td>
+                    <td th:text="${r.description}">Administrador de la plataforma</td>
+                    <td>
+                        <div class="tags">
+                            <span class="perm-tag" th:each="p : ${r.permissions}" th:text="${p.name}">USER_READ</span>
+                        </div>
+                    </td>
+                    <td class="col-actions">
+                        <div class="actions">
+                            <a class="btn btn-ghost btn-sm" th:href="@{/roles/{id}/permissions(id=${r.id})}">Permisos</a>
+                            <a sec:authorize="hasAuthority('ROLE_WRITE')" class="btn btn-ghost btn-sm"
+                               th:href="@{/roles/{id}/edit(id=${r.id})}">Editar</a>
+                            <form sec:authorize="hasRole('ADMIN') and hasAuthority('ROLE_WRITE')" class="inline"
+                                  th:action="@{/roles/{id}/delete(id=${r.id})}" method="post"
+                                  onsubmit="return confirm('¿Eliminar este rol? No se puede deshacer.')">
+                                <button type="submit" class="btn btn-danger btn-sm">Eliminar</button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <section class="panel empty" th:if="${roles.isEmpty()}">
+            <p>No hay roles todavía. Crea uno para empezar a repartir permisos.</p>
+        </section>
+    </main>
+</div>
+</body>
+</html>

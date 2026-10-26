@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragments/layout :: head('Permisos')}"></head>
+<body>
+<div class="shell">
+    <aside th:replace="~{fragments/layout :: sidebar('permissions')}"></aside>
+    <main class="main">
+        <header class="page-head">
+            <div>
+                <h1>Permisos</h1>
+                <p class="lead">Las acciones concretas que se pueden otorgar a un rol.</p>
+            </div>
+            <a sec:authorize="hasAuthority('PERMISSION_WRITE')" class="btn btn-primary" th:href="@{/permissions/new}">Crear permiso</a>
+        </header>
+
+        <div th:replace="~{fragments/layout :: alerts}"></div>
+
+        <div class="table-wrap" th:if="${!permissions.isEmpty()}">
+            <table class="table">
+                <thead>
+                <tr>
+                    <th scope="col">Permiso</th>
+                    <th scope="col">Descripción</th>
+                    <th scope="col" class="col-actions" sec:authorize="hasAuthority('PERMISSION_WRITE')">Acciones</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="p : ${permissions}">
+                    <td><span class="perm-tag" th:text="${p.name}">USER_READ</span></td>
+                    <td th:text="${p.description}">Consultar usuarios</td>
+                    <td class="col-actions" sec:authorize="hasAuthority('PERMISSION_WRITE')">
+                        <div class="actions">
+                            <a class="btn btn-ghost btn-sm" th:href="@{/permissions/{id}/edit(id=${p.id})}">Editar</a>
+                            <form class="inline" th:action="@{/permissions/{id}/delete(id=${p.id})}" method="post"
+                                  onsubmit="return confirm('¿Eliminar este permiso? No se puede deshacer.')">
+                                <button type="submit" class="btn btn-danger btn-sm">Eliminar</button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <section class="panel empty" th:if="${permissions.isEmpty()}">
+            <p>No hay permisos. Crea uno para poder asociarlo a los roles.</p>
+        </section>
+    </main>
+</div>
+</body>
+</html>

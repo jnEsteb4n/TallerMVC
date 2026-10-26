@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Editar usuario')}"></head>
+<body>
+<div class="shell">
+    <aside th:replace="~{fragments/layout :: sidebar('users')}"></aside>
+    <main class="main">
+        <header class="page-head">
+            <div>
+                <a class="back" th:href="@{/users}">Usuarios</a>
+                <h1>Editar usuario</h1>
+                <p class="lead" th:text="${user.email}">ana.torres@u.icesi.edu.co</p>
+            </div>
+        </header>
+
+        <div th:replace="~{fragments/layout :: alerts}"></div>
+
+        <section class="panel panel-narrow">
+            <form th:action="@{/users/{id}(id=${user.id})}" th:object="${userForm}" method="post" class="form" novalidate>
+                <div class="field">
+                    <label for="fullName">Nombre completo</label>
+                    <input type="text" th:field="*{fullName}" th:errorclass="is-invalid">
+                    <p class="field-error" th:if="${#fields.hasErrors('fullName')}" th:errors="*{fullName}"></p>
+                </div>
+                <div class="field">
+                    <label for="academicProgram">Programa académico</label>
+                    <input type="text" th:field="*{academicProgram}" th:errorclass="is-invalid">
+                    <p class="field-error" th:if="${#fields.hasErrors('academicProgram')}" th:errors="*{academicProgram}"></p>
+                </div>
+                <div class="field">
+                    <label for="photoUrl">URL de la foto</label>
+                    <input type="text" th:field="*{photoUrl}" th:errorclass="is-invalid">
+                    <p class="field-error" th:if="${#fields.hasErrors('photoUrl')}" th:errors="*{photoUrl}"></p>
+                </div>
+                <div class="field field-check">
+                    <input type="checkbox" th:field="*{enabled}">
+                    <label for="enabled1">Cuenta activa (puede iniciar sesión)</label>
+                </div>
+                <div class="form-actions">
+                    <button class="btn btn-primary" type="submit">Guardar cambios</button>
+                    <a class="btn btn-ghost" th:href="@{/users}">Cancelar</a>
+                </div>
+            </form>
+        </section>
+    </main>
+</div>
+</body>
+</html>

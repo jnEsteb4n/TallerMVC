@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Iniciar sesión')}"></head>
+<body class="auth-page">
+<main class="auth">
+    <section class="auth-aside">
+        <span class="brand-mark brand-mark-lg" aria-hidden="true"></span>
+        <h1>Alpha</h1>
+        <p>Finanzas personales para la comunidad Icesi. Aquí se administra quién entra y qué puede hacer cada rol.</p>
+    </section>
+
+    <section class="auth-panel">
+        <h2>Iniciar sesión</h2>
+
+        <p th:if="${param.error}" class="alert alert-error" role="alert">Correo o contraseña incorrectos, o la cuenta está desactivada.</p>
+        <p th:if="${param.logout}" class="alert alert-success" role="status">Cerraste sesión.</p>
+        <p th:if="${success}" th:text="${success}" class="alert alert-success" role="status"></p>
+
+        <form th:action="@{/login}" method="post" class="form">
+            <div class="field">
+                <label for="email">Correo institucional</label>
+                <input id="email" name="email" type="email" required autofocus autocomplete="username"
+                       placeholder="nombre@u.icesi.edu.co">
+            </div>
+            <div class="field">
+                <label for="password">Contraseña</label>
+                <input id="password" name="password" type="password" required autocomplete="current-password">
+            </div>
+            <button class="btn btn-primary btn-block" type="submit">Iniciar sesión</button>
+        </form>
+
+        <p class="auth-switch">¿No tienes cuenta? <a th:href="@{/register}">Regístrate</a></p>
+    </section>
+</main>
+</body>
+</html>

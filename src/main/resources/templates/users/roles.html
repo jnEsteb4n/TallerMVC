@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragments/layout :: head('Roles del usuario')}"></head>
+<body>
+<div class="shell">
+    <aside th:replace="~{fragments/layout :: sidebar('users')}"></aside>
+    <main class="main">
+        <header class="page-head">
+            <div>
+                <a class="back" th:href="@{/users}">Usuarios</a>
+                <h1 th:text="'Roles de ' + ${user.fullName}">Roles de Ana Torres</h1>
+                <p class="lead" th:text="${user.email}">ana.torres@u.icesi.edu.co</p>
+            </div>
+        </header>
+
+        <div th:replace="~{fragments/layout :: alerts}"></div>
+
+        <section class="panel">
+            <h2>Roles asignados</h2>
+            <ul class="assigned">
+                <li th:each="r : ${user.roles}">
+                    <div>
+                        <span class="role-chip" th:text="${r.name}">ADMIN</span>
+                        <span class="muted" th:text="${r.permissions.size()} + ' permisos'">3 permisos</span>
+                    </div>
+                    <form sec:authorize="hasAuthority('USER_WRITE')"
+                          th:action="@{/users/{id}/roles/{roleId}/remove(id=${user.id}, roleId=${r.id})}"
+                          method="post" class="inline">
+                        <button type="submit" class="btn btn-danger btn-sm">Quitar rol</button>
+                    </form>
+                </li>
+            </ul>
+            <p class="muted">Un usuario siempre conserva al menos un rol.</p>
+        </section>
+
+        <section class="panel" sec:authorize="hasAuthority('USER_WRITE')">
+            <h2>Asociar rol</h2>
+            <form th:if="${!availableRoles.isEmpty()}" th:action="@{/users/{id}/roles(id=${user.id})}"
+                  method="post" class="form form-row">
+                <div class="field">
+                    <label for="roleId">Rol</label>
+                    <select id="roleId" name="roleId" required>
+                        <option th:each="r : ${availableRoles}" th:value="${r.id}"
+                                th:text="${r.description != null and !r.description.isBlank()} ? ${r.name + ' (' + r.description + ')'} : ${r.name}">USER</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-primary">Asociar rol</button>
+            </form>
+            <p class="muted" th:if="${availableRoles.isEmpty()}">Ya tiene todos los roles disponibles.</p>
+        </section>
+    </main>
+</div>
+</body>
+</html>

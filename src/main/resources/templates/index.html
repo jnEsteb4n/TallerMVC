@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragments/layout :: head('Inicio')}"></head>
+<body>
+<div class="shell">
+    <aside th:replace="~{fragments/layout :: sidebar('home')}"></aside>
+    <main class="main">
+        <header class="page-head">
+            <div>
+                <h1 th:text="'Hola, ' + ${displayName}">Hola</h1>
+                <p class="lead">Esto es lo que tu cuenta puede hacer en el módulo de accesos.</p>
+            </div>
+        </header>
+
+        <div th:replace="~{fragments/layout :: alerts}"></div>
+
+        <section class="panel">
+            <h2>Tus roles</h2>
+            <div class="tags" th:if="${!myRoles.isEmpty()}">
+                <span class="role-chip" th:each="r : ${myRoles}" th:text="${r}">ADMIN</span>
+            </div>
+            <p class="muted" th:if="${myRoles.isEmpty()}">No tienes roles asignados.</p>
+
+            <h2>Tus permisos</h2>
+            <div class="tags" th:if="${!myPermissions.isEmpty()}">
+                <span class="perm-tag" th:each="p : ${myPermissions}" th:text="${p}">USER_READ</span>
+            </div>
+            <p class="muted" th:if="${myPermissions.isEmpty()}">Tu cuenta no tiene permisos asignados.</p>
+        </section>
+
+        <section class="panel">
+            <h2>Accesos</h2>
+            <ul class="shortcuts">
+                <li sec:authorize="hasAuthority('USER_READ')">
+                    <a th:href="@{/users}">Usuarios</a>
+                    <span>Consulta las cuentas y los roles de cada una.</span>
+                </li>
+                <li sec:authorize="hasAuthority('ROLE_READ')">
+                    <a th:href="@{/roles}">Roles</a>
+                    <span>Revisa qué permisos agrupa cada rol.</span>
+                </li>
+                <li sec:authorize="hasAuthority('ROLE_WRITE')">
+                    <a th:href="@{/roles/new}">Crear rol</a>
+                    <span>Define un rol nuevo con sus permisos iniciales.</span>
+                </li>
+                <li sec:authorize="hasAuthority('PERMISSION_READ')">
+                    <a th:href="@{/permissions}">Permisos</a>
+                    <span>El catálogo de acciones que se pueden otorgar.</span>
+                </li>
+            </ul>
+            <p class="muted" sec:authorize="!hasAnyAuthority('USER_READ','ROLE_READ','PERMISSION_READ')">
+                Todavía no tienes accesos de gestión.
+            </p>
+        </section>
+    </main>
+</div>
+</body>
+</html>

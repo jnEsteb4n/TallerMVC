@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head(${permissionId == null ? 'Crear permiso' : 'Editar permiso'})}"></head>
+<body>
+<div class="shell">
+    <aside th:replace="~{fragments/layout :: sidebar('permissions')}"></aside>
+    <main class="main">
+        <header class="page-head">
+            <div>
+                <a class="back" th:href="@{/permissions}">Permisos</a>
+                <h1 th:text="${permissionId == null ? 'Crear permiso' : 'Editar permiso'}">Crear permiso</h1>
+            </div>
+        </header>
+
+        <div th:replace="~{fragments/layout :: alerts}"></div>
+
+        <section class="panel panel-narrow">
+            <form th:action="${permissionId == null} ? @{/permissions} : @{/permissions/{id}(id=${permissionId})}"
+                  th:object="${permissionForm}" method="post" class="form" novalidate>
+                <div class="field">
+                    <label for="name">Nombre</label>
+                    <input type="text" th:field="*{name}" th:errorclass="is-invalid" placeholder="REPORT_READ">
+                    <p class="field-hint">Por convención, MODULO_ACCION en mayúsculas.</p>
+                    <p class="field-error" th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></p>
+                </div>
+                <div class="field">
+                    <label for="description">Descripción</label>
+                    <textarea th:field="*{description}" rows="3" th:errorclass="is-invalid"></textarea>
+                    <p class="field-error" th:if="${#fields.hasErrors('description')}" th:errors="*{description}"></p>
+                </div>
+                <div class="form-actions">
+                    <button class="btn btn-primary" type="submit"
+                            th:text="${permissionId == null} ? 'Crear permiso' : 'Guardar cambios'">Crear permiso</button>
+                    <a class="btn btn-ghost" th:href="@{/permissions}">Cancelar</a>
+                </div>
+            </form>
+        </section>
+    </main>
+</div>
+</body>
+</html>

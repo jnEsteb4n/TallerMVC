@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragments/layout :: head('Permisos del rol')}"></head>
+<body>
+<div class="shell">
+    <aside th:replace="~{fragments/layout :: sidebar('roles')}"></aside>
+    <main class="main">
+        <header class="page-head">
+            <div>
+                <a class="back" th:href="@{/roles}">Roles</a>
+                <h1 th:text="'Permisos de ' + ${role.name}">Permisos de ADMIN</h1>
+                <p class="lead" th:text="${role.description}">Administrador de la plataforma</p>
+            </div>
+        </header>
+
+        <div th:replace="~{fragments/layout :: alerts}"></div>
+
+        <section class="panel">
+            <h2>Permisos asociados</h2>
+            <ul class="assigned">
+                <li th:each="p : ${assignedPermissions}">
+                    <div>
+                        <span class="perm-tag" th:text="${p.name}">USER_READ</span>
+                        <span class="muted" th:text="${p.description}">Consultar usuarios</span>
+                    </div>
+                    <form sec:authorize="hasAuthority('ROLE_WRITE')"
+                          th:action="@{/roles/{id}/permissions/{permissionId}/remove(id=${role.id}, permissionId=${p.id})}"
+                          method="post" class="inline">
+                        <button type="submit" class="btn btn-danger btn-sm">Quitar</button>
+                    </form>
+                </li>
+            </ul>
+            <p class="muted">Un rol siempre conserva al menos un permiso.</p>
+        </section>
+
+        <section class="panel" sec:authorize="hasAuthority('ROLE_WRITE')">
+            <h2>Asociar permiso</h2>
+            <form th:if="${!availablePermissions.isEmpty()}"
+                  th:action="@{/roles/{id}/permissions(id=${role.id})}" method="post" class="form form-row">
+                <div class="field">
+                    <label for="permissionId">Permiso</label>
+                    <select id="permissionId" name="permissionId" required>
+                        <option th:each="p : ${availablePermissions}" th:value="${p.id}"
+                                th:text="${p.description != null and !p.description.isBlank()} ? ${p.name + ' (' + p.description + ')'} : ${p.name}">USER_READ</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-primary">Asociar permiso</button>
+            </form>
+            <p class="muted" th:if="${availablePermissions.isEmpty()}">Este rol ya tiene todos los permisos.</p>
+        </section>
+    </main>
+</div>
+</body>
+</html>

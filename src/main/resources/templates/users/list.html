@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragments/layout :: head('Usuarios')}"></head>
+<body>
+<div class="shell">
+    <aside th:replace="~{fragments/layout :: sidebar('users')}"></aside>
+    <main class="main">
+        <header class="page-head">
+            <div>
+                <h1>Usuarios</h1>
+                <p class="lead" th:text="${users.size()} + ' cuentas registradas'">0 cuentas registradas</p>
+            </div>
+        </header>
+
+        <div th:replace="~{fragments/layout :: alerts}"></div>
+
+        <div class="table-wrap" th:if="${!users.isEmpty()}">
+            <table class="table">
+                <thead>
+                <tr>
+                    <th scope="col">Usuario</th>
+                    <th scope="col">Programa</th>
+                    <th scope="col">Estado</th>
+                    <th scope="col">Roles</th>
+                    <th scope="col" class="col-actions">Acciones</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="u : ${users}">
+                    <td>
+                        <span class="strong" th:text="${u.fullName}">Ana Torres</span>
+                        <span class="sub" th:text="${u.email}">ana.torres@u.icesi.edu.co</span>
+                    </td>
+                    <td th:text="${u.academicProgram != null and !u.academicProgram.isBlank()} ? ${u.academicProgram} : '—'">Ingeniería de Sistemas</td>
+                    <td>
+                        <span class="status" th:classappend="${u.enabled} ? 'status-on' : 'status-off'"
+                              th:text="${u.enabled} ? 'Activo' : 'Inactivo'">Activo</span>
+                    </td>
+                    <td>
+                        <div class="tags">
+                            <span class="role-chip" th:each="r : ${u.roles}" th:text="${r.name}">USER</span>
+                        </div>
+                    </td>
+                    <td class="col-actions">
+                        <div class="actions">
+                            <a class="btn btn-ghost btn-sm" th:href="@{/users/{id}/roles(id=${u.id})}">Roles</a>
+                            <a sec:authorize="hasAuthority('USER_WRITE')" class="btn btn-ghost btn-sm"
+                               th:href="@{/users/{id}/edit(id=${u.id})}">Editar</a>
+                            <form sec:authorize="hasAuthority('USER_WRITE')" class="inline"
+                                  th:action="@{/users/{id}/delete(id=${u.id})}" method="post"
+                                  onsubmit="return confirm('¿Eliminar este usuario? No se puede deshacer.')">
+                                <button type="submit" class="btn btn-danger btn-sm">Eliminar</button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <section class="panel empty" th:if="${users.isEmpty()}">
+            <p>Aún no hay usuarios. Las cuentas se crean desde la página de registro.</p>
+        </section>
+    </main>
+</div>
+</body>
+</html>

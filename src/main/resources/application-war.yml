@@ -1,0 +1,6 @@
+# Solo se activa al desplegar el WAR en Tomcat (AlphaBackendApplication.configure).
+# En Tomcat la ruta relativa ./data depende de dónde se arrancó el servidor y puede no tener
+# permisos de escritura; java.io.tmpdir apunta a $CATALINA_BASE/temp, que Tomcat siempre puede escribir.
+spring:
+  datasource:
+    url: jdbc:h2:file:${java.io.tmpdir}/alphabackend/alphabackend

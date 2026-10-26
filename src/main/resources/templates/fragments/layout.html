@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:fragment="head(title)">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title th:text="${title} + ' | Alpha'">Alpha</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+</head>
+<body>
+
+<!-- Barra lateral: cada enlace aparece solo si el usuario tiene el permiso de lectura -->
+<aside th:fragment="sidebar(active)" class="sidebar">
+    <a class="brand" th:href="@{/}">
+        <span class="brand-mark" aria-hidden="true"></span>
+        <span>Alpha · Accesos</span>
+    </a>
+    <nav class="nav" aria-label="Principal">
+        <a th:href="@{/}" th:classappend="${active == 'home'} ? 'is-active'">Inicio</a>
+        <a sec:authorize="hasAuthority('USER_READ')" th:href="@{/users}"
+           th:classappend="${active == 'users'} ? 'is-active'">Usuarios</a>
+        <a sec:authorize="hasAuthority('ROLE_READ')" th:href="@{/roles}"
+           th:classappend="${active == 'roles'} ? 'is-active'">Roles</a>
+        <a sec:authorize="hasAuthority('PERMISSION_READ')" th:href="@{/permissions}"
+           th:classappend="${active == 'permissions'} ? 'is-active'">Permisos</a>
+    </nav>
+    <div class="session">
+        <span class="session-label">Sesión iniciada como</span>
+        <strong class="session-name" sec:authentication="name">correo</strong>
+        <form th:action="@{/logout}" method="post">
+            <button class="btn-link" type="submit">Cerrar sesión</button>
+        </form>
+    </div>
+</aside>
+
+<div th:fragment="alerts" class="alerts">
+    <p class="alert alert-success" th:if="${success}" th:text="${success}" role="status"></p>
+    <p class="alert alert-error" th:if="${error}" th:text="${error}" role="alert"></p>
+</div>
+
+</body>
+</html>
